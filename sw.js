@@ -1,9 +1,11 @@
-const CACHE = 'ykt-q003-v1';
-const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
+const CACHE = 'ykt-q003-v2';
+const ASSETS = ['./', './index.html', './termo.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', function (e) {
   e.waitUntil(
-    caches.open(CACHE).then(function (c) { return c.addAll(ASSETS); }).then(function () { return self.skipWaiting(); })
+    caches.open(CACHE)
+      .then(function (c) { return c.addAll(ASSETS).catch(function () {}); })
+      .then(function () { return self.skipWaiting(); })
   );
 });
 
@@ -15,15 +17,36 @@ self.addEventListener('activate', function (e) {
   );
 });
 
+// HTML (paginas): REDE PRIMEIRO - assim toda atualizacao publicada chega na hora.
+// Demais arquivos (icones etc.): cache primeiro, atualizando em segundo plano.
 self.addEventListener('fetch', function (e) {
-  if (e.request.method !== 'GET') return;
-  e.respondWith(
-    caches.match(e.request).then(function (cached) {
-      return cached || fetch(e.request).then(function (res) {
+  var req = e.request;
+  if (req.method !== 'GET') return;
+
+  var isHTML = req.mode === 'navigate' ||
+               (req.headers.get('accept') || '').indexOf('text/html') !== -1;
+
+  if (isHTML) {
+    e.respondWith(
+      fetch(req, { cache: 'no-store' }).then(function (res) {
         var copy = res.clone();
-        caches.open(CACHE).then(function (c) { c.put(e.request, copy); });
+        caches.open(CACHE).then(function (c) { c.put(req, copy); });
         return res;
-      }).catch(function () { return caches.match('./index.html'); });
+      }).catch(function () {
+        return caches.match(req).then(function (c) { return c || caches.match('./index.html'); });
+      })
+    );
+    return;
+  }
+
+  e.respondWith(
+    caches.match(req).then(function (cached) {
+      var net = fetch(req).then(function (res) {
+        var copy = res.clone();
+        caches.open(CACHE).then(function (c) { c.put(req, copy); });
+        return res;
+      }).catch(function () { return cached; });
+      return cached || net;
     })
   );
 });
