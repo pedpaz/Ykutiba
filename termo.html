@@ -80,6 +80,34 @@ footer{text-align:center;color:var(--t3);font-size:11px;margin-top:26px;padding-
 .done p{color:var(--t2);font-size:14px}
 .done .again{margin-top:22px;background:transparent;border:1px solid var(--linha2);color:var(--areia);
 border-radius:12px;padding:12px 20px;font-family:var(--fbody);font-weight:700;cursor:pointer}
+.btn-alt{background:var(--ouro);color:var(--noite);box-shadow:0 10px 30px rgba(232,162,76,.24);margin-bottom:9px}
+.btn-alt svg{fill:var(--noite)}
+
+/* ===== documento imprimível (formulário do condomínio) ===== */
+#doc{display:none}
+@media print{
+  @page{size:A4;margin:10mm 12mm}
+  body{background:#fff !important;color:#000 !important;background-image:none !important}
+  .wrap,.send,footer{display:none !important}
+  #doc{display:block !important;font-family:Arial,Helvetica,sans-serif;color:#000;font-size:9pt;line-height:1.3}
+  #doc .dt{text-align:center;font-style:italic;font-weight:bold;font-size:10.5pt;margin-bottom:8px}
+  #doc .lbl{font-weight:bold}
+  #doc .ln{border-bottom:1px solid #000;display:inline-block;min-width:50px;padding:0 3px}
+  #doc .sec{font-weight:bold;text-decoration:underline;margin:8px 0 3px}
+  #doc p{margin:2px 0}
+  #doc .grid2{display:flex;gap:18px}
+  #doc .grid2>div{flex:1}
+  #doc .cap{margin:7px 0 2px;font-weight:bold;font-size:8.5pt;line-height:1.25}
+  #doc table{width:100%;border-collapse:collapse;margin-top:4px}
+  #doc th,#doc td{border:1px solid #000;padding:2px 5px;font-size:8.5pt;text-align:left;height:15px}
+  #doc th{font-weight:bold}
+  #doc .termo-t{text-align:center;font-weight:bold;margin:11px 0 6px;font-size:9.5pt}
+  #doc .termo-p{text-align:justify;margin-bottom:5px;font-size:8.7pt;line-height:1.32}
+  #doc .sigarea{margin-top:16px;text-align:center;page-break-inside:avoid}
+  #doc .sigimg{max-height:42px;display:block;margin:0 auto -4px}
+  #doc .sigline{border-top:1px solid #000;width:260px;margin:0 auto;padding-top:3px;font-size:8.5pt}
+  #doc .local{margin-top:12px;text-align:center;font-size:9pt}
+}
 </style></head>
 <body>
 
@@ -164,15 +192,64 @@ border-radius:12px;padding:12px 20px;font-family:var(--fbody);font-weight:700;cu
   <div class="sigwrap">
     <label style="display:block;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);margin-bottom:6px">Assinatura</label>
     <div class="sigbox" id="sigBox"><canvas id="sig"></canvas><div class="sighint">Assine aqui com o dedo</div></div>
-    <div class="sigbar"><small>Use o dedo (celular) ou o mouse.</small><button class="clearsig" id="clearSig" type="button">Limpar</button></div>
+    <div class="sigbar"><small>Ela aparece impressa no PDF que vai para a portaria.</small><button class="clearsig" id="clearSig" type="button">Limpar</button></div>
   </div>
 </div>
 
 <footer>Casa Q003 · Residencial Ykutiba — Imbassaí, Bahia · aluGO</footer>
 </div>
 
+<div id="doc">
+  <div class="dt">Informe de aluguel/Empréstimo</div>
+  <p><span class="lbl">Nome proprietário:</span> <span class="ln" id="d_prop" style="min-width:300px">&nbsp;</span></p>
+  <p><span class="lbl">Unidade:</span> <span class="ln" id="d_unidade" style="min-width:120px">&nbsp;</span></p>
+
+  <div class="sec">Dados da locação:</div>
+  <p><span class="lbl">Nome do responsável pela locação (inquilino):</span> <span class="ln" id="d_nome" style="min-width:240px">&nbsp;</span></p>
+  <p><span class="lbl">Documento de identificação:</span> <span class="ln" id="d_doc" style="min-width:300px">&nbsp;</span></p>
+  <div class="grid2">
+    <p><span class="lbl">Veículo:</span> <span class="ln" id="d_veic" style="min-width:150px">&nbsp;</span></p>
+    <p><span class="lbl">Placa:</span> <span class="ln" id="d_placa" style="min-width:120px">&nbsp;</span></p>
+  </div>
+  <div class="grid2">
+    <p><span class="lbl">Data de entrada:</span> <span class="ln" id="d_din" style="min-width:110px">&nbsp;</span></p>
+    <p><span class="lbl">Horário de chegada:</span> <span class="ln" id="d_hin" style="min-width:80px">&nbsp;</span></p>
+  </div>
+  <div class="grid2">
+    <p><span class="lbl">Data de saída:</span> <span class="ln" id="d_dout" style="min-width:110px">&nbsp;</span></p>
+    <p><span class="lbl">Horário de saída:</span> <span class="ln" id="d_hout" style="min-width:80px">&nbsp;</span></p>
+  </div>
+  <div class="grid2">
+    <p><span class="lbl">Quantidade de adultos:</span> <span class="ln" id="d_ad" style="min-width:50px">&nbsp;</span></p>
+    <p><span class="lbl">Quantidade de crianças:</span> <span class="ln" id="d_cr" style="min-width:50px">&nbsp;</span></p>
+  </div>
+
+  <div class="cap">Capacidade definida por Regulamento Interno: até 3 pessoas por quarto<br>(entre adultos e crianças)</div>
+  <div class="cap">Favor listar abaixo os nomes dos ocupantes durante o período da hospedagem:</div>
+  <table>
+    <thead><tr><th style="width:46%">Nome</th><th style="width:28%">Documento</th><th style="width:26%">Telefone</th></tr></thead>
+    <tbody id="d_tbody"></tbody>
+  </table>
+
+  <div class="termo-t">Termo de Responsabilidade – Inquilino Aluguel de temporada</div>
+  <p class="termo-p">Eu, <span class="ln" id="d_t_nome" style="min-width:230px">&nbsp;</span> e RG: <span class="ln" id="d_t_rg" style="min-width:130px">&nbsp;</span> inscrito no CPF sob o nº <span class="ln" id="d_t_cpf" style="min-width:140px">&nbsp;</span> ao alugar a unidade <span class="ln" id="d_t_un" style="min-width:70px">&nbsp;</span> do Condomínio Residencial Ykutiba, localizado na rua da Igreja, S/N – Imbassaí – Mata de São João/BA, pelo período de <span class="ln" id="d_t_di" style="min-width:100px">&nbsp;</span> à <span class="ln" id="d_t_df" style="min-width:100px">&nbsp;</span>, declaro estar ciente das normas do Regulamento Interno (que recebi resumidamente juntamente com esta autorização), que responsabilizando-me pelos danos que vierem a ocorrer provocados por mim e demais ocupantes da unidade no período acima citado, bem como também tenho ciência que o condomínio não se responsabiliza por materiais de qualquer natureza deixados em suas dependências antes, durante e após o período de locação.</p>
+  <p class="termo-p">Declaro ainda que assumo completa responsabilidade por quaisquer infrações às normas da Convenção e no regulamento interno que venham ocorrer no período de locação.</p>
+  <p class="termo-p">Por ser expressão da verdade, firmo o presente.</p>
+
+  <div class="local">Imbassaí (BA), <span class="ln" id="d_dia" style="min-width:34px">&nbsp;</span>/<span class="ln" id="d_mes" style="min-width:34px">&nbsp;</span>/<span class="ln" id="d_ano" style="min-width:56px">&nbsp;</span>.</div>
+
+  <div class="sigarea">
+    <img id="d_sig" class="sigimg" alt="" style="display:none">
+    <div class="sigline" id="d_signame">&nbsp;</div>
+  </div>
+</div>
+
 <div class="send" id="sendBar">
   <div class="sendin">
+    <button class="btn btn-alt" id="pdfBtn" type="button" disabled>
+      <svg viewBox="0 0 24 24" fill="none" stroke="#0E1C27" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"/></svg>
+      Gerar PDF para a portaria
+    </button>
     <button class="btn" id="sendBtn" type="button" disabled>
       <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1012 2zm0 2a8 8 0 11-4.1 14.9l-.3-.2-2.8.7.8-2.7-.2-.3A8 8 0 0112 4zm4.5 10.3c-.2-.1-1.4-.7-1.6-.8s-.4-.1-.5.1-.6.8-.8 1-.3.2-.5.1a6.5 6.5 0 01-3.2-2.8c-.2-.4.2-.4.6-1.2l-.1-.4-.8-1.8c-.2-.5-.4-.4-.5-.4h-.5a1 1 0 00-.7.3c-.3.3-.9.9-.9 2.1s.9 2.4 1 2.6 1.8 2.9 4.4 4c1.6.7 2.2.7 3 .6.5 0 1.4-.6 1.6-1.1s.2-1 .1-1.1z"/></svg>
       Enviar termo pelo WhatsApp
@@ -188,7 +265,7 @@ border-radius:12px;padding:12px 20px;font-family:var(--fbody);font-weight:700;cu
   /* ======================= CONFIGURAÇÃO ======================= */
   var WPP = "5562982545453";           // WhatsApp do anfitrião (aluGO)
   var UNIDADE = "Q003";
-  var PROPRIETARIO = "";               // opcional: nome do proprietário no informe
+  var PROPRIETARIO = "Meyre Anne Vieira Ferreira Souza";   // proprietária da unidade
 
   // loftcare-os (Supabase). Preencha para gravar automaticamente.
   var SUPABASE_URL  = "";              // ex.: "https://xxxxx.supabase.co"
@@ -311,8 +388,9 @@ border-radius:12px;padding:12px 20px;font-family:var(--fbody);font-weight:700;cu
     refreshTermo();
     var ok=valid();
     $("sendBtn").disabled=!ok;
+    $("pdfBtn").disabled=!ok;
     var s=$("status");
-    if(ok){ s.textContent="Tudo certo — pode enviar."; s.className="status ok"; }
+    if(ok){ s.textContent="Tudo certo — gere o PDF e/ou envie ao anfitrião."; s.className="status ok"; }
     else { s.textContent="Preencha os campos, aceite o termo e assine."; s.className="status"; }
   }
   ["r_nome","r_rg","r_email","p_din","p_hin","p_dout","p_hout","v_modelo","v_placa","o_adultos","o_criancas"]
@@ -396,6 +474,55 @@ border-radius:12px;padding:12px 20px;font-family:var(--fbody);font-weight:700;cu
       return {saved:true};
     });
   }
+
+  /* ---------- documento imprimível (formulário do condomínio) ---------- */
+  function txt(id,v){ var e=$(id); if(e) e.textContent = (v===null||v===undefined||v==="") ? "\u00A0" : v; }
+  function fillDoc(){
+    var p=payload();
+    txt("d_prop", PROPRIETARIO || "\u00A0");
+    txt("d_unidade", UNIDADE);
+    txt("d_nome", p.responsavel_nome);
+    txt("d_doc", "RG " + (p.responsavel_rg||"-") + "  |  CPF " + (p.responsavel_cpf||"-"));
+    txt("d_veic", p.sem_veiculo ? "Sem veículo" : (p.veiculo_modelo||"-"));
+    txt("d_placa", p.sem_veiculo ? "—" : (p.veiculo_placa||"-"));
+    txt("d_din", br(p.data_entrada)); txt("d_hin", p.hora_chegada);
+    txt("d_dout", br(p.data_saida));  txt("d_hout", p.hora_saida);
+    txt("d_ad", p.qtd_adultos);       txt("d_cr", p.qtd_criancas);
+
+    // tabela de ocupantes (mínimo 10 linhas, como no formulário original)
+    var tb=$("d_tbody"); tb.innerHTML="";
+    var linhas = Math.max(10, p.ocupantes.length);
+    for(var i=0;i<linhas;i++){
+      var o=p.ocupantes[i]||{};
+      var tr=document.createElement("tr");
+      tr.innerHTML="<td>"+(o.nome||"&nbsp;")+"</td><td>"+(o.doc||"&nbsp;")+"</td><td>"+(o.tel||"&nbsp;")+"</td>";
+      tb.appendChild(tr);
+    }
+
+    // termo
+    txt("d_t_nome", p.responsavel_nome);
+    txt("d_t_rg", p.responsavel_rg);
+    txt("d_t_cpf", p.responsavel_cpf);
+    txt("d_t_un", UNIDADE);
+    txt("d_t_di", br(p.data_entrada));
+    txt("d_t_df", br(p.data_saida));
+
+    var h=new Date();
+    txt("d_dia", String(h.getDate()).padStart(2,"0"));
+    txt("d_mes", String(h.getMonth()+1).padStart(2,"0"));
+    txt("d_ano", String(h.getFullYear()));
+
+    // assinatura
+    var im=$("d_sig");
+    if(hasSig){ im.src=cv.toDataURL("image/png"); im.style.display=""; }
+    else { im.style.display="none"; }
+    txt("d_signame", p.responsavel_nome || "Assinatura do responsável");
+  }
+  $("pdfBtn").addEventListener("click",function(){
+    if(!valid()) return;
+    fillDoc();
+    setTimeout(function(){ window.print(); }, 120);
+  });
 
   /* ---------- envio ---------- */
   $("sendBtn").addEventListener("click",function(){
