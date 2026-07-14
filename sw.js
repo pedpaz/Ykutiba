@@ -1,4 +1,4 @@
-const CACHE = 'ykt-q003-v2';
+const CACHE = 'ykt-q003-v3';
 const ASSETS = ['./', './index.html', './termo.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', function (e) {
@@ -22,6 +22,13 @@ self.addEventListener('activate', function (e) {
 self.addEventListener('fetch', function (e) {
   var req = e.request;
   if (req.method !== 'GET') return;
+
+
+  // video: sempre da rede (nao cachear - arquivo grande)
+  if (/\.(mp4|mov|webm)$/i.test(new URL(req.url).pathname)) {
+    e.respondWith(fetch(req));
+    return;
+  }
 
   var isHTML = req.mode === 'navigate' ||
                (req.headers.get('accept') || '').indexOf('text/html') !== -1;
